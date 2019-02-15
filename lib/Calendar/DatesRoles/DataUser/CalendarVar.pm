@@ -11,7 +11,7 @@ use Role::Tiny;
 use Role::Tiny::With;
 no strict 'refs'; # Role::Tiny imports strict for us
 
-with 'Calenda::DatesRoles::Public::Basic';
+with 'Calendar::DatesRoles::PublicInterface::Basic';
 requires 'prepare_data';
 
 sub _calc_min_max_year {
@@ -63,7 +63,7 @@ sub get_entries {
 
     my $cal = ${"$mod\::CALENDAR"};
     my @res;
-    for my $e (@$entries) {
+    for my $e (@{ $cal->{entries} }) {
         next unless $e->{year} == $year;
         next if defined $month && $e->{month} != $month;
         next if defined $day   && $e->{day}   != $day;
