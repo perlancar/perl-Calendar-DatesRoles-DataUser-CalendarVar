@@ -53,6 +53,7 @@ sub get_max_year {
 
 sub get_entries {
     my $mod = shift;
+    my $params = ref $_[0] eq 'HASH' ? shift : {};
     my ($year, $month, $day) = @_;
 
     die "Please specify year" unless defined $year;
@@ -67,6 +68,7 @@ sub get_entries {
         next unless $e->{year} == $year;
         next if defined $month && $e->{month} != $month;
         next if defined $day   && $e->{day}   != $day;
+        next if $mod->can("filter_entry") && !$mod->filter_entry($e, $params);
         push @res, $e;
     }
 
