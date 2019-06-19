@@ -100,4 +100,6 @@ will be taken from C<date> to let you be DRY.
 
 L<Calendar::Dates>
 
-L<Calendar::DatesRoles::FromData>
+L<Calendar::DatesRoles::DataProvider::CalendarVar::FromDATA::Simple>
+
+L<Calendar::DatesRoles::DataProvider::CalendarVar::FromDATA::CSVJF>
