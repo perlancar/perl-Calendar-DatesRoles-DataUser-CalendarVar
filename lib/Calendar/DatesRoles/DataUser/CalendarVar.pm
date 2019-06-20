@@ -91,6 +91,8 @@ sub get_entries {
 
     my $cal = ${"$mod\::CALENDAR"};
     my @res;
+
+  ENTRY:
     for my $e0 (@{ $cal->{entries} }) {
         my $e = {%$e0}; # shallow copy
 
@@ -131,6 +133,24 @@ sub get_entries {
         # filter by month & day
         next if defined $month && $e->{month} != $month;
         next if defined $day   && $e->{day}   != $day;
+
+        # filter by tags
+        if ($params->{include_tags}) {
+            my $included;
+            for my $tag (@{ $params->{include_tags} }) {
+                if ($e->{tags} && (grep {$_ eq $tag} @{$e->{tags}})) {
+                    $included++; last;
+                }
+            }
+            next unless $included;
+        }
+        if ($params->{exclude_tags}) {
+            for my $tag (@{ $params->{exclude_tags} }) {
+                if ($e->{tags} && (grep {$_ eq $tag} @{$e->{tags}})) {
+                    next ENTRY;
+                }
+            }
+        }
 
         # filter low-priority items by default
         next if !$params->{all} && $e->{tags} &&
@@ -212,12 +232,30 @@ calendar, then the years from anniversaries will also be used.
 
 Usage:
 
- $entries = $caldate->get_entries([ \%opts , ] $year [ , $month [ , $day ] ]);
+ $entries = $caldate->get_entries([ \%params , ] $year [ , $month [ , $day ] ]);
 
 Only entries from matching year will be used, unless for anniversary entries.
 
-By default, low-priority entries will not be included unless the option C<all>
-is set to true.
+By default, low-priority entries will not be included unless the parameter
+C<all> is set to true.
+
+B<Recognized parameters>.
+
+=over
+
+=item * all
+
+Boolean. Specified in Calendar::Dates.
+
+=item * include_tags
+
+Array. Specified in Calendar::Dates.
+
+=item * exclude_tags
+
+Array. Specified in Calendar::Dates.
+
+=back
 
 
 =head1 SEE ALSO
